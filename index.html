@@ -1,581 +1,1257 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>PvZ Batu – YG Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dijital Bağımlılık Test Sistemi</title>
 
 <style>
-  body{margin:0;background:#225522;user-select:none;overflow:hidden;}
+/* --------------------------------------------------------
+   GENEL TASARIM
+-------------------------------------------------------- */
+body {
+    margin: 0;
+    background: #1d1d1d;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
 
-  /* === LOGO EKRANI === */
-  #logoScreen {
-    position:absolute;top:0;left:0;width:100%;height:100%;
-    background:black;display:flex;justify-content:center;
-    align-items:center;flex-direction:column;z-index:1000;
-  }
-  #logoScreen h1 {
-    color:white;font-size:60px;font-family:Arial;
-    text-shadow:4px 4px 10px yellow;
-    animation: glow 1.5s infinite alternate;
-  }
-  @keyframes glow {
-    0%{text-shadow:4px 4px 10px yellow;}
-    100%{text-shadow:4px 4px 25px #ffea00;}
-  }
+h1 {
+    margin-top: 20px;
+    font-size: 36px;
+    color: #ffca3a;
+    text-shadow: 0 0 12px rgba(0,0,0,0.8);
+}
 
-  /* === MENÜ === */
-  #menuWrapper {
-    position:absolute;top:0;left:0;width:100%;height:100%;
-    background:linear-gradient(#064f06,#002f00);
-    display:none;justify-content:center;align-items:center;
-    z-index:500;
-  }
+/* --------------------------------------------------------
+   GİRİŞ EKRANI
+-------------------------------------------------------- */
+#loginBox {
+    width: 420px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #2b2b2b;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.45);
+}
 
-  #menuBox {
-    width:430px;padding:25px;border-radius:18px;
-    background:rgba(0,0,0,0.45);
-    border:4px solid yellow;text-align:center;
-  }
+input {
+    width: 85%;
+    padding: 14px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 17px;
+}
 
-  .menuButton {
-    width:100%;padding:15px;margin:10px 0;
-    background:#004d00;color:yellow;border:3px solid yellow;
-    border-radius:10px;font-size:24px;cursor:pointer;
-  }
-  .menuButton:hover { background:#009900; }
+button {
+    margin-top: 20px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    background: #ffca3a;
+    color: black;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px black;
+}
 
-  .endlessBtn {
-    background:#770000;border-color:#ff4444;color:white;
-  }
-  .endlessBtn:hover { background:#aa0000; }
+/* --------------------------------------------------------
+   TEST EKRANI
+-------------------------------------------------------- */
+#testScreen {
+    display: none;
+    width: 420px;
+    height: 260px;
+    background: #333;
+    margin: 30px auto;
+    border-radius: 15px;
+    font-size: 70px;
+    justify-content: center;
+    align-items: center;
+}
 
-  /* === HUD === */
-  #sunCount {
-    position:absolute;top:15px;left:15px;font-size:28px;
-    color:yellow;font-family:Arial;text-shadow:2px 2px 4px black;
-    z-index:10;
-  }
-  #levelInfo {
-    position:absolute;top:15px;right:15px;font-size:24px;
-    color:white;font-family:Arial;text-shadow:2px 2px 4px black;
-    z-index:10;
-  }
 
-  /* === BİTKİ BUTONLARI === */
-  #cards {
-    position:absolute;top:60px;left:15px;
-    display:flex;flex-direction:column;gap:10px;z-index:10;
-  }
-  .card {
-    width:140px;height:55px;padding-top:6px;text-align:center;
-    background:#444;border:2px solid #333;color:white;
-    border-radius:10px;font-family:Arial;font-size:15px;
-    cursor:pointer;line-height:1.2;
-  }
-  .card:hover { background:#777; }
+/* --------------------------------------------------------
+   SINAV EKRANI
+-------------------------------------------------------- */
+#examScreen {
+    display: none;
+    width: 520px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #2c2c2c;
+    border-radius: 16px;
+    box-shadow: 0 0 20px black;
+}
 
-  /* === OYUN KANVAS === */
-  canvas { display:block;margin-left:180px;background:#2f7a2f; }
+/* --------------------------------------------------------
+   REHBER GİRİŞ
+-------------------------------------------------------- */
+#teacherLoginOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    z-index: 999999;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+#teacherLoginOverlay input {
+    padding:12px; 
+    font-size:18px; 
+    border-radius:8px; 
+    width:240px; 
+    text-align:center;
+}
+
+/* --------------------------------------------------------
+   REHBER PANELİ
+-------------------------------------------------------- */
+#teacherPanel {
+    display:none; 
+    position:fixed; 
+    top:0; left:0; 
+    width:100%; height:100%; 
+    background:#111; 
+    color:white; 
+    overflow-y:auto; 
+    padding:35px; 
+    z-index:999999;
+}
+
+table {
+    width:100%; 
+    border-collapse:collapse; 
+    margin-top:20px; 
+    font-size:15px;
+}
+
+th, td {
+    border:1px solid #555; 
+    padding:6px; 
+    text-align:center;
+}
+
+th {
+    background:#222;
+}
+
+/* Silme butonu */
+.deleteBtn {
+    background:#d11;
+    color:white;
+    padding:10px 20px;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+/* --------------------------------------------------------
+   GIF ALANI
+-------------------------------------------------------- */
+#gifArea {
+    position: absolute;   /* ❗ fixed DEĞİL */
+    width: 180px;
+    height: 180px;
+    display: none;
+    z-index: 1;
+    pointer-events: none;
+}
+
+
+   
+
+
+
+
+#gifArea img {
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+}
+
+/* --------------------------------------------------------
+   YÖNERGE EKRANI
+-------------------------------------------------------- */
+#instructionOverlay {
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.92);
+    z-index: 99999;
+    color:white;
+    font-size:22px;
+    padding-top:40px;
+}
+
+#instructionBox {
+    width: 70%;
+    max-width: 650px;
+    margin: auto;
+    background:#2d2d2d;
+    padding: 30px;
+    border-radius: 15px;
+    border:2px solid #ffca3a;
+    box-shadow:0 0 20px black;
+}
+
+/* Öğrenci görmesin diye sınav puanı mesajı gizlenecek */
+.hiddenExamMessage {
+    display:none !important;
+}
+/* --------------------------------------------------------
+   GIF GÜVENLİ ALAN
+-------------------------------------------------------- */
+#gifSafeZone {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 220px;
+    height: 220px;
+    pointer-events: none;
+    z-index: 1;
+}
+/* --------------------------------------------------------
+   YAZIYI HER ZAMAN ÜSTE AL
+-------------------------------------------------------- */
+#testScreen,
+#examScreen {
+    position: relative;
+    z-index: 10;   /* 🔒 GIF ve emoji bunun ALTINDA kalır */
+}
+/* --------------------------------------------------------
+   GIF & EMOJI ALT KATMAN
+-------------------------------------------------------- */
+#gifSafeZone,
+#gifArea {
+    position: fixed;
+    z-index: 1;    /* 🔽 yazıdan düşük */
+    pointer-events: none;
+}
+#gifArea {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- LOGO -->
-<div id="logoScreen">
-  <h1>YG STUDIOS</h1>
-  <p style="color:white;font-family:Arial;font-size:22px;margin-top:10px;">
-    Yurdakul Gaming
-  </p>
+<h1>Dijital Bağımlılık Test Sistemi</h1>
+
+
+<!-- --------------------------------------------------------
+     ÖĞRENCİ GİRİŞ EKRANI
+-------------------------------------------------------- -->
+<div id="loginBox">
+    <h2>Öğrenci Girişi</h2>
+    <input id="studentName" placeholder="Ad Soyad">
+    <input id="studentClass" placeholder="Sınıf / Numara">
+    <button onclick="startSystem()">Başla</button>
+
+    <br><br>
+    <button onclick="openTeacherLogin()" style="background:#888;">Rehberlik Girişi</button>
 </div>
 
-<!-- MENÜ -->
-<div id="menuWrapper">
-  <div id="menuBox">
 
-    <p style="color:white;font-family:Arial;font-size:18px;text-align:center;margin-bottom:10px;">
-  Sunflower’dan düşen sarı güneş toplarını toplayarak puan kazanır ve bitkilerle kaleni korursun.
-</p>
+<!-- --------------------------------------------------------
+     TEST EKRANI
+-------------------------------------------------------- -->
+<div id="testScreen"></div>
 
-    <h1 style="color:yellow;font-family:Arial;">SELECT MODE</h1>
 
-    <button class="menuButton" data-level="1">LEVEL 1</button>
-    <button class="menuButton" data-level="2">LEVEL 2</button>
-    <button class="menuButton" data-level="3">LEVEL 3</button>
-    <button class="menuButton" data-level="4">LEVEL 4</button>
-    <button class="menuButton" data-level="5">LEVEL 5</button>
-    <button class="menuButton" data-level="6">LEVEL 6</button>
-
-    <button class="menuButton endlessBtn" data-level="endless">ENDLESS MODE</button>
-  </div>
+<!-- --------------------------------------------------------
+     SINAV EKRANI
+-------------------------------------------------------- -->
+<div id="examScreen">
+    <h2 id="examQuestion"></h2>
+    <div id="examAnswers"></div>
+    <h3 id="examTimer">Kalan Süre: 5:00</h3>
 </div>
 
-<!-- HUD -->
-<div id="sunCount">Sun: 50</div>
-<div id="levelInfo">Level: 1</div>
 
-<!-- Bitki Barı -->
-<div id="cards"></div>
+<!-- --------------------------------------------------------
+     GIF ALANI
+-------------------------------------------------------- -->
+<!-- --------------------------------------------------------
+     GIF GÜVENLİ ALAN
+-------------------------------------------------------- -->
+<div id="gifSafeZone">
+    <div id="gifArea">
+        <img id="gifImg" src="">
+    </div>
+</div>
 
-<!-- Oyun Alanı -->
-<canvas id="game" width="1280" height="650"></canvas>
+
+
+<!-- --------------------------------------------------------
+     YÖNERGE EKRANI (Fullscreen)
+-------------------------------------------------------- -->
+<div id="instructionOverlay">
+    <div id="instructionBox">
+        <h2 id="instTitle"></h2>
+        <p id="instText"></p>
+        <button onclick="hideInstruction()" style="padding:12px 25px; font-size:22px;">BAŞLA</button>
+    </div>
+</div>
+
+
+<!-- --------------------------------------------------------
+     REHBER GİRİŞ POP-UP
+-------------------------------------------------------- -->
+<div id="teacherLoginOverlay">
+    <h2>Rehberlik Paneli Girişi</h2>
+    <p>Şifreyi Girin:</p>
+    <input id="teacherPass" type="password" placeholder="Şifre">
+    <br>
+    <button onclick="enterTeacherPanel()" 
+            style="padding:12px 25px; font-size:18px; border-radius:8px; background:#08f; color:white;">
+        Giriş Yap
+    </button>
+</div>
+
+
+<!-- --------------------------------------------------------
+     REHBER PANELİ (CSV İNDİR + TÜMÜ SİL)
+-------------------------------------------------------- -->
+<div id="teacherPanel">
+
+    <h1>📊 Rehberlik Öğrenci Sonuç Paneli</h1>
+    <p>Tüm test + sınav sonuçları burada görünür.</p>
+    <hr style="border-color:#444;">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ad</th>
+                <th>Sınıf</th>
+                <th>Tarih</th>
+                <th>Dikkat</th>
+                <th>Dağ.</th>
+                <th>Ödül</th>
+                <th>Hiper</th>
+                <th>Stroop</th>
+                <th>Dürt.</th>
+                <th>Sınav</th>
+                <th>Toplam %</th>
+            </tr>
+        </thead>
+        <tbody id="panelTableBody"></tbody>
+    </table>
+
+    <button class="deleteBtn" onclick="deleteAllAndDownload()">
+        📥 Tüm Kayıtları İndir + ❌ Sil
+    </button>
+
+    <br><br>
+    <button onclick="closeTeacherPanel()" 
+            style="padding:10px 20px; font-size:18px; border-radius:8px; background:#333; color:white;">
+        Kapat
+    </button>
+</div>
+
+<script type="module">
+
+/* ---------------------------------------------------
+   FIREBASE BAĞLANTISI (DEĞİŞTİRİLECEK ALAN)
+--------------------------------------------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    getDocs,
+    deleteDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAZx2LiyJY-d4zx4n7I1Kutd1CfKhNdwVE",
+    authDomain: "dijital-bagimlilik-test.firebaseapp.com",
+    projectId: "dijital-bagimlilik-test",
+    storageBucket: "dijital-bagimlilik-test.appspot.com",
+    messagingSenderId: "137997296088",
+    appId: "1:137997296088:web:ddb3e0a343d08b3b6552ad"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+const studentsCol = collection(db, "students");
+
+window.db = db;
+window.studentsCol = studentsCol;
+
+
+/* ---------------------------------------------------
+   FIREBASE → KAYIT EKLE
+--------------------------------------------------- */
+window.saveStudentResult = async function (data) {
+    try {
+        await addDoc(studentsCol, data);
+        console.log("Kayıt başarılı:", data);
+    } catch (err) {
+        console.error("Kayıt hatası:", err);
+    }
+};
+
+
+/* ---------------------------------------------------
+   FIREBASE → VERİ ÇEK & REHBER PANELİNE YAZDIR
+--------------------------------------------------- */
+window.loadStudents = async function () {
+
+    let table = document.getElementById("panelTableBody");
+    table.innerHTML = "";
+
+    try {
+        const snap = await getDocs(studentsCol);
+
+        snap.forEach(docu => {
+            let d = docu.data();
+
+            table.innerHTML += `
+            <tr>
+                <td>${d.name}</td>
+                <td>${d.class}</td>
+                <td>${d.date}</td>
+                <td>${d.dikkat}</td>
+                <td>${d.daginiklik}</td>
+                <td>${d.odul}</td>
+                <td>${d.hiper}</td>
+                <td>${d.stroop}</td>
+                <td>${d.durtu}</td>
+                <td>${d.sinav}</td>
+                <td><b>${d.totalPercent}%</b></td>
+            </tr>`;
+        });
+
+    } catch (err) {
+        console.error("Veri çekme hatası:", err);
+    }
+};
+
+
+/* ---------------------------------------------------
+   TÜM VERİLERİ CSV İNDİR + FIREBASE'DAN SİL
+--------------------------------------------------- */
+
+window.deleteAllAndDownload = async function() {
+    const snap = await getDocs(studentsCol);
+    let rows = [
+        ["Ad","Sınıf","Tarih","Dikkat","Dağ.","Ödül","Hiper","Stroop","Dürtü","Sınav","Toplam %"]
+    ];
+
+    for (let d of snap.docs) {
+        let x = d.data();
+        rows.push([ 
+            x.name, x.class, x.date, x.dikkat, x.daginiklik, x.odul, 
+            x.hiper, x.stroop, x.durtu, x.sinav, x.totalPercent
+        ]);
+    }
+
+    // CSV üret
+    let csv = rows.map(r => r.join(",")).join("\n");
+    let blob = new Blob([csv], {type:"text/csv"});
+    let url = URL.createObjectURL(blob);
+
+    // İndir
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "ogrenci_sonuclari.csv";
+    a.click();
+
+    // Firestore’dan sil
+    for (let d of snap.docs) {
+        await deleteDoc(doc(db, "students", d.id));
+    }
+
+    alert("📥 Tüm kayıtlar indirildi ve Firestore'dan silindi!");
+
+    loadStudents();
+};
+
+</script>
+
+
 
 <script>
-  let paused = false;
-  
-document.addEventListener("keydown", (e)=>{
-  if(e.key.toLowerCase()==="p"){
-    paused = !paused;
-  }
-});
-
 /* ============================================================
-   LOGO → MENÜ GEÇİŞİ
-============================================================ */
-setTimeout(()=>{
-  document.getElementById("logoScreen").style.display="none";
-  document.getElementById("menuWrapper").style.display="flex";
-},2000);
+   PART 3 — 7 TESTİN TAM MANTIĞI (RASTGELE + 10 HEDEF KURALI)
+============================================================= */
 
-/* ============================================================
-   TEMEL AYARLAR
-============================================================ */
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-const ROWS=5, COLS=9;
-const CELL_W=120, CELL_H=130;
+let currentTest = 1;
+let studentName = "";
+let studentClass = "";
 
-let sun=50;
-let selectedPlant=null;
-document.getElementById("sunCount").innerText="Sun: "+sun;
-
-const grid=[];
-for(let r=0;r<ROWS;r++){
-  grid[r]=[];
-  for(let c=0;c<COLS;c++) grid[r][c]=null;
-}
-
-const zombies=[];
-const bullets=[];
-const suns=[];
-
-/* ============================================================
-   BİTKİ BİLGİLERİ
-============================================================ */
-const PLANTS={
-  sunflower:{id:"sunflower",name:"Sunflower",cost:50,hp:200,sunRate:4000,color:"yellow"},
-  pea:{id:"pea",name:"Peashooter",cost:100,hp:250,damage:25,fireRate:1200,color:"lime"},
-  ice:{id:"ice",name:"Ice Pea",cost:125,hp:250,damage:20,fireRate:1400,slow:true,color:"#33ccff"},
-  wall:{id:"wall",name:"Wall-nut",cost:50,hp:600,color:"#8b5a2b"},
-  bomb:{id:"bomb",name:"Cherry Bomb",cost:150,hp:100,bomb:true,range:180,damage:999,color:"red"}
+let testScores = {
+    dikkat: 0,
+    daginiklik: 0,
+    odul: 0,
+    hiper: 0,
+    stroop: 0,
+    durtu: 0
 };
 
-/* ============================================================
-   BİTKİ BUTONLARI
-============================================================ */
-const cardBar=document.getElementById("cards");
-function drawCards(){
-  cardBar.innerHTML="";
-  Object.values(PLANTS).forEach(p=>{
-    const d=document.createElement("div");
-    d.className="card";
-    d.innerHTML=p.name+"<br>("+p.cost+")";
-    d.onclick=()=>{selectedPlant=p;drawCards();}
-    if(selectedPlant && selectedPlant.id===p.id) d.style.background="#777";
-    cardBar.appendChild(d);
-  });
+let testScreen = document.getElementById("testScreen");
+function clearEvents() {
+    document.onkeydown = null;
+    testScreen.onclick = null;
 }
-drawCards();
 
-/* ============================================================
-   LEVEL + ENDLESS MOD
-============================================================ */
-let gameMode="level"; // "endless"
-let currentLevel=1;
 
-const LEVEL_SPAWN_MS = {
-  1: 12000,  // Level 1 → 12 saniyede 1 zombi
-  2: 11000,  // Level 2 → 11 saniye
-  3: 10000,  // Level 3 → 10 saniye
-  4: 9000,   // Level 4 → 9 saniye
-  5: 8000,   // Level 5 → 8 saniye
-  6: 6500    // Level 6 → 6.5 saniye
+/* ---------------------------------------------------
+   YARDIMCI — DİZİ KARIŞTIR
+--------------------------------------------------- */
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+
+/* ---------------------------------------------------
+   1) DİKKAT TESTİ — En az 10 tane 5
+--------------------------------------------------- */
+function dikkatTesti() {
+clearEvents();
+    let hit = 0, wrong = 0;
+
+    let seq = [];
+    for (let i = 0; i < 10; i++) seq.push(5);
+    while (seq.length < 45) {
+        let n = Math.floor(Math.random() * 9) + 1;
+        if (n !== 5) seq.push(n);
+    }
+
+    shuffle(seq);
+
+    let index = 0;
+    testScreen.style.display = "flex";
+
+    let interval = setInterval(() => {
+
+        let num = seq[index];
+        testScreen.innerHTML = num;
+
+        document.onkeydown = (e) => {
+            if (e.code === "Space") {
+                if (num === 5) hit++;
+                else wrong++;
+            }
+        };
+
+        index++;
+        if (index >= seq.length) {
+            clearInterval(interval);
+            let puan = hit * 2.5 - wrong;
+            puan = Math.max(0, Math.min(20, puan));
+            testScores.dikkat = puan;
+
+            currentTest++;
+            runTest();
+        }
+
+    }, 700);
+}
+
+
+/* ---------------------------------------------------
+   2) DİKKAT DAĞINIKLIĞI — 10 hedef
+--------------------------------------------------- */
+function daginiklikTesti() {
+clearEvents();
+    let hit = 0, wrong = 0;
+
+    let seq = new Array(10).fill("target")
+              .concat(new Array(10).fill("other"));
+    shuffle(seq);
+
+    let index = 0;
+    testScreen.style.display = "flex";
+
+    let interval = setInterval(() => {
+        let t = seq[index];
+
+        if (t === "target") {
+            testScreen.innerHTML = "■";
+            testScreen.style.color = "red";
+            testScreen.onclick = () => hit++;
+        } else {
+            let arr = ["★","☺","●","♥"];
+            testScreen.innerHTML = arr[Math.floor(Math.random()*arr.length)];
+            testScreen.style.color = "yellow";
+            testScreen.onclick = () => wrong++;
+        }
+
+        index++;
+        if (index >= seq.length) {
+            clearInterval(interval);
+            let puan = hit * 2.5 - wrong;
+            puan = Math.max(0, Math.min(20, puan));
+            testScores.daginiklik = puan;
+
+            currentTest++;
+            runTest();
+        }
+
+    }, 800);
+}
+
+
+/* ---------------------------------------------------
+   3) ÖDÜL TESTİ — 10 tane “2 PUAN”
+--------------------------------------------------- */
+function odulTesti() {
+clearEvents();
+    let hit = 0, wrong = 0;
+
+    let seq = [];
+    for (let i=0;i<10;i++) seq.push(2);
+    for (let i=0;i<10;i++) seq.push(1);
+    for (let i=0;i<10;i++) seq.push(3);
+
+    shuffle(seq);
+
+    let index = 0;
+    testScreen.style.display = "flex";
+
+    let interval = setInterval(() => {
+
+        let n = seq[index];
+
+        if (n === 2) {
+            testScreen.innerHTML = "2 PUAN";
+            testScreen.onclick = () => hit++;
+        } else {
+            testScreen.innerHTML = n + " PUAN";
+            testScreen.onclick = () => wrong++;
+        }
+
+        index++;
+        if (index >= seq.length) {
+            clearInterval(interval);
+
+            let puan = hit * 2.5 - wrong;
+            puan = Math.max(0, Math.min(20, puan));
+            testScores.odul = puan;
+
+            currentTest++;
+            runTest();
+        }
+
+    }, 800);
+}
+
+
+/* ---------------------------------------------------
+   4) HİPERAKTİVİTE — Mavi tıkla / Kırmızı bekle
+--------------------------------------------------- */
+function hiperaktiviteTesti() {
+clearEvents();
+    let hit = 0, wrong = 0;
+
+    let seq = new Array(10).fill("blue")
+              .concat(new Array(10).fill("red"));
+    shuffle(seq);
+
+    let index = 0;
+    testScreen.style.display = "flex";
+
+    let interval = setInterval(() => {
+
+        let c = seq[index];
+        testScreen.style.background = c;
+        testScreen.innerHTML = "";
+
+        testScreen.onclick = () => {
+            if (c === "blue") hit++;
+            else wrong++;
+        };
+
+        index++;
+        if (index >= seq.length) {
+            clearInterval(interval);
+            testScreen.style.background = "#333";
+
+            let puan = hit * 2.5 - wrong;
+            puan = Math.max(0, Math.min(20, puan));
+            testScores.hiper = puan;
+
+            currentTest++;
+            runTest();
+        }
+
+    }, 600);
+}
+
+
+/* ---------------------------------------------------
+   5) STROOP TESTİ
+--------------------------------------------------- */
+/* ---------------------------------------------------
+   5) STROOP TESTİ — RENK = KELİME → TIKLA
+--------------------------------------------------- */
+function stroopTesti() {
+    clearEvents();
+    let hit = 0, wrong = 0;
+
+    const renkler = ["kırmızı", "mavi", "yeşil"];
+    const renkKod = { kırmızı:"red", mavi:"blue", yeşil:"green" };
+
+    let seq = [];
+
+    // 10 DOĞRU (RENK = KELİME)
+    for (let i = 0; i < 10; i++) {
+        let r = renkler[Math.floor(Math.random() * 3)];
+        seq.push({ kelime: r, renk: r });
+    }
+
+    // 10 YANILTICI (RENK ≠ KELİME)
+    for (let i = 0; i < 10; i++) {
+        let kelime = renkler[Math.floor(Math.random() * 3)];
+        let renk = kelime;
+        while (renk === kelime) {
+            renk = renkler[Math.floor(Math.random() * 3)];
+        }
+        seq.push({ kelime, renk });
+    }
+
+    shuffle(seq);
+
+    let index = 0;
+    testScreen.style.display = "flex";
+
+    let interval = setInterval(() => {
+
+        let item = seq[index];
+        testScreen.innerHTML = item.kelime.toUpperCase();
+        testScreen.style.color = renkKod[item.renk];
+
+        testScreen.onclick = () => {
+            if (item.kelime === item.renk) hit++;
+            else wrong++;
+        };
+
+        index++;
+        if (index >= seq.length) {
+            clearInterval(interval);
+            testScreen.style.color = "white";
+
+            let puan = hit * 2.5 - wrong;
+            puan = Math.max(0, Math.min(20, puan));
+            testScores.stroop = puan;
+
+            currentTest++;
+            runTest();
+        }
+
+    }, 1200);
+}
+
+
+
+/* ---------------------------------------------------
+   6) DÜRTÜSELLİK — TIKLA / BEKLE
+--------------------------------------------------- */
+function durtusellikTesti() {
+    clearEvents();
+    let hit = 0, wrong = 0;
+
+    let seq = new Array(10).fill("TIKLA")
+              .concat(new Array(10).fill("BEKLE"));
+
+    shuffle(seq);
+
+    let index = 0;
+    testScreen.style.display = "flex";
+
+    let interval = setInterval(() => {
+
+        let w = seq[index];
+        testScreen.innerHTML = w;
+
+        testScreen.onclick = () => {
+    testScreen.onclick = null; // ikinci tıklamayı engelle
+    if (w === "TIKLA") hit++;
+    else wrong++;
 };
 
-const LEVEL_ZOMBIES={1:5,2:7,3:9,4:11,5:13,6:15};
+        
 
-let spawnTimer=0;
-let zombiesSpawned=0;
-let bossSpawned=false;
-let leakedZombies=0;
+        index++;
+        if (index >= seq.length) {
+            clearInterval(interval);
 
-/* ============================================================
-   MENÜ TIKLAMA
-============================================================ */
-document.querySelectorAll(".menuButton").forEach(btn=>{
-  btn.onclick=()=>{
-    document.getElementById("menuWrapper").style.display="none";
+            let puan = hit * 2.5 - wrong;
+            puan = Math.max(0, Math.min(20, puan));
+            testScores.durtu = puan;
 
-    let lv=btn.getAttribute("data-level");
-
-    if(lv==="endless"){
-      gameMode="endless";
-      document.getElementById("levelInfo").innerText="Endless";
-    }else{
-      gameMode="level";
-      currentLevel=parseInt(lv);
-      document.getElementById("levelInfo").innerText="Level: "+currentLevel;
-    }
-  };
-});
-
-/* ============================================================
-   ZOMBİ OLUŞTURMA
-============================================================ */
-function spawnZombie(isBoss=false){
-  const lane=Math.floor(Math.random()*ROWS);
-  if(isBoss){
-    zombies.push({lane,x:1280,y:lane*CELL_H+70,hp:800,maxHp:800,speed:0.3,boss:true});
-  } else {
-    zombies.push({lane,x:1280,y:lane*CELL_H+70,hp:150,maxHp:150,speed:0.45,boss:false});
-  }
-}
-
-/* ============================================================
-   LEVEL MANTIĞI
-============================================================ */
-function levelLogic(dt){
-  if(gameMode==="endless"){ 
-    endlessLogic(dt); 
-    return; 
-  }
-
-  spawnTimer += dt;
-  const interval = LEVEL_SPAWN_MS[currentLevel];
-
-  // normal zombi spawn
-  if(spawnTimer > interval && zombiesSpawned < LEVEL_ZOMBIES[currentLevel]){
-    spawnTimer = 0;
-    zombiesSpawned++;
-    spawnZombie();
-  }
-
-  // boss spawn
-  if(!bossSpawned &&
-     zombiesSpawned >= LEVEL_ZOMBIES[currentLevel] &&
-     zombies.filter(z => !z.boss).length === 0) {
-      spawnZombie(true);
-      bossSpawned = true;
-  }
-
-  // level biterse
-  if(bossSpawned && zombies.length === 0){
-    currentLevel++;
-
-    // --- TÜM LEVEL BİTİNCE ---
-    if(currentLevel > 6){
-      alert("TEBRİKLER! TÜM LEVEL'LER BİTTİ! Lobiye dönüyorsunuz.");
-      document.getElementById("menuWrapper").style.display = "flex";
-      return;  // ÇOK ÖNEMLİ
-    }
-
-    // --- SONRAKİ LEVEL BAŞLAR ---
-    resetLevel();
-    alert("LEVEL " + currentLevel + " BAŞLIYOR!");
-  }
-}
-
-  
-
-
-/* ============================================================
-   ENDLESS LOGIC
-============================================================ */
-let endlessTime=0;
-let endlessDifficulty=1;
-
-function endlessLogic(dt){
-  endlessTime+=dt;
-
-  if(endlessTime>6000/endlessDifficulty){
-    endlessTime=0;
-    spawnZombie();
-    if(Math.random()<0.1) spawnZombie(true);
-    endlessDifficulty+=0.05;
-  }
-}
-
-/* ============================================================
-   LEVEL RESET
-============================================================ */
-function resetLevel(){
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      grid[r][c]=null;
-    }
-  }
-  zombies.length=0;
-  bullets.length=0;
-  suns.length=0;
-
-  sun=50;
-  document.getElementById("sunCount").innerText="Sun: "+sun;
-
-  selectedPlant=null;
-  drawCards();
-
-  spawnTimer=0;
-  zombiesSpawned=0;
-  bossSpawned=false;
-  leakedZombies=0;
-
-  document.getElementById("levelInfo").innerText="Level: "+currentLevel;
-}
-
-/* ============================================================
-   TIKLAMA — BİTKİ VE GÜNEŞ
-============================================================ */
-canvas.addEventListener("click",(e)=>{
-  const rect=canvas.getBoundingClientRect();
-  const mx=e.clientX-rect.left;
-  const my=e.clientY-rect.top;
-
-  const r=Math.floor(my/CELL_H);
-  const c=Math.floor(mx/CELL_W);
-  if(r<0||r>=ROWS||c<0||c>=COLS) return;
-
-  for(let i=suns.length-1;i>=0;i--){
-    const s=suns[i];
-    if(Math.abs(mx-s.x)<30 && Math.abs(my-s.y)<30){
-      sun+=25;
-      document.getElementById("sunCount").innerText="Sun: "+sun;
-      suns.splice(i,1);return;
-    }
-  }
-
-  if(!selectedPlant) return;
-
-  const info=selectedPlant;
-  if(sun<info.cost) return;
-  if(grid[r][c]!==null) return;
-
-  grid[r][c]={type:info.id,hp:info.hp,row:r,col:c,shootTimer:0,sunTimer:0};
-  sun-=info.cost;
-  document.getElementById("sunCount").innerText="Sun: "+sun;
-
-  selectedPlant=null;
-  drawCards();
-});
-
-/* ============================================================
-   BİTKİ, MERMİ, ZOMBİ UPDATE
-============================================================ */
-function updatePlants(dt){
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      const p=grid[r][c];
-      if(!p) continue;
-
-      const info=PLANTS[p.type];
-
-      if(p.type==="sunflower"){
-        p.sunTimer+=dt;
-        if(p.sunTimer>info.sunRate){
-          p.sunTimer=0;
-          suns.push({x:c*CELL_W+70,y:r*CELL_H+20,vy:1});
+            currentTest++;
+            runTest();
         }
-      }
 
-      if(info.bomb){
-        p.shootTimer+=dt;
-        if(p.shootTimer>900){
-          zombies.forEach(z=>{
-            let dx=z.x-(c*CELL_W+60);
-            let dy=z.y-(r*CELL_H+60);
-            let d=Math.sqrt(dx*dx+dy*dy);
-            if(d<info.range) z.hp-=info.damage;
-          });
-          grid[r][c]=null;
-        }
-      }
-
-      if(info.fireRate){
-        const target=zombies.some(z=>z.lane===r && z.x>c*CELL_W);
-        if(target){
-          p.shootTimer+=dt;
-          if(p.shootTimer>info.fireRate){
-            p.shootTimer=0;
-            bullets.push({
-              x:c*CELL_W+80,y:r*CELL_H+60,
-              lane:r,dmg:info.damage,slow:info.slow||false
-            });
-          }
-        }
-      }
-
-      if(p.hp<=0) grid[r][c]=null;
-    }
-  }
+    }, 800);
 }
 
-function updateBullets(dt){
-  for(let i=bullets.length-1;i>=0;i--){
-    const b=bullets[i];
-    b.x+=6;
 
-    for(let j=zombies.length-1;j>=0;j--){
-      const z=zombies[j];
-      if(z.lane===b.lane && Math.abs(z.x-b.x)<30){
-        z.hp-=b.dmg;
-        if(b.slow && !z.boss) z.speed*=0.7;
-        bullets.splice(i,1);
-        break;
-      }
-    }
+/* ---------------------------------------------------
+   TEST GEÇİŞLERİ
+--------------------------------------------------- */
+function runTest() {
 
-    if(b.x>1280) bullets.splice(i,1);
-  }
+    testScreen.style.display = "flex";
+    testScreen.style.background = "#333";
+    testScreen.innerHTML = "";
+
+    startGifSystem(); // GIF/emoji sistemi aktif
+
+    if (currentTest === 1) showInstruction(
+        "DİKKAT TESTİ",
+        "Sadece <b>5</b> görünce boşluk tuşuna bas.",
+        () => dikkatTesti()
+    );
+
+    else if (currentTest === 2) showInstruction(
+        "DİKKAT DAĞINIKLIĞI",
+        "Kırmızı kare görünce <b>tıkla</b>. Diğerlerine dokunma.",
+        () => daginiklikTesti()
+    );
+
+    else if (currentTest === 3) showInstruction(
+        "ÖDÜL DUYARLILIĞI",
+        "'<b>2 PUAN</b>' yazısı çıkınca tıkla. Diğerlerine basma.",
+        () => odulTesti()
+    );
+
+    else if (currentTest === 4) showInstruction(
+        "HİPERAKTİVİTE",
+        "Ekran <b>mavi</b> olursa tıkla. <b>Kırmızı</b> olursa dokunma.",
+        () => hiperaktiviteTesti()
+    );
+
+ 
+
+
+
+   else if (currentTest === 5) showInstruction(
+    "STROOP TESTİ",
+    "Yazıya değil, <b>YAZI RENGİNE</b> bak.<br><br>" +
+    "EĞER:<br>" +
+    "Yazının RENGİ ile YAZDIĞI kelime AYNIYSA ➜ <b>TIKLA</b><br><br>" +
+    "FARKLIYSA ➜ <b>HİÇBİR ŞEY YAPMA</b>",
+    () => stroopTesti()
+
+);
+else if (currentTest === 6) showInstruction(
+    "DÜRTÜSELLİK",
+    "'TIKLA' yazarsa tıkla. 'BEKLE' yazarsa tıklama.",
+    () => durtusellikTesti()
+);
+
+
+    else if (currentTest === 7) showInstruction(
+        "10 SORULUK SINAV",
+        "Süren <b>5 dakika</b>. Her soru 10 puan.",
+        () => startExam()
+    );
 }
 
-function updateZombies(dt){
-  for(let i=zombies.length-1;i>=0;i--){
-    const z=zombies[i];
-    const c=Math.floor(z.x/CELL_W);
 
-    const p=(c>=0&&c<COLS)? grid[z.lane][c] : null;
 
-    if(p){
-      p.hp-=0.25;
-    } else {
-      z.x-=z.speed;
-    }
-
-    if(z.hp<=0){
-      zombies.splice(i,1);continue;
-    }
-
-    if(z.x<0){
-      if(gameMode==="level"){
-        leakedZombies++;
-        if(leakedZombies>=2){
-          alert("2 zombi içeri girdi. Kaybettin!");
-          location.reload();
-        }
-      }
-      zombies.splice(i,1);
-    }
-  }
-}
-
-function updateSuns(dt){
-  suns.forEach(s=>{
-    s.y+=s.vy;
-    if(s.y>600) s.y=600;
-  });
-}
 
 /* ============================================================
-   ÇİZİM
-============================================================ */
-function drawGrid(){
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      ctx.strokeStyle="#1e4f1e";
-      ctx.strokeRect(c*CELL_W,r*CELL_H,CELL_W,CELL_H);
-    }
-  }
-}
-function drawPlants(){
-  for(let r=0;r<ROWS;r++){
-    for(let c=0;c<COLS;c++){
-      const p=grid[r][c];
-      if(!p) continue;
+   PART 4 – SINAV MOTORU (10 SORU + GERİ SAYIM)
+============================================================= */
 
-      const info=PLANTS[p.type];
+let examQuestions = [];
+let examIndex = 0;
+let examScore = 0;
+let examTimer = 300;
+let examInterval;
 
-      ctx.fillStyle=info.color;
-      ctx.beginPath();
-      ctx.arc(c*CELL_W+60,r*CELL_H+60,30,0,Math.PI*2);
-      ctx.fill();
+function buildExamQuestions() {
+    examQuestions = [
+        { q:"2 - 4 - 6 - 8 - ?", a:["9","10","12"], c:1 },
 
-      ctx.fillStyle="red";
-      ctx.fillRect(c*CELL_W+30,r*CELL_H+95,60,8);
-      ctx.fillStyle="lime";
-      ctx.fillRect(c*CELL_W+30,r*CELL_H+95,(p.hp/info.hp)*60,8);
-    }
-  }
-}
-function drawBullets(){
-  ctx.fillStyle="orange";
-  bullets.forEach(b=>{
-    ctx.beginPath();
-    ctx.arc(b.x,b.y,8,0,Math.PI*2);
-    ctx.fill();
-  });
-}
-function drawZombies(){
-  zombies.forEach(z=>{
-    ctx.fillStyle=z.boss?"#ffdd00":"#663300";
-    ctx.fillRect(z.x-30,z.y-50,60,100);
+        { q:"Farklı olan hangisi?<br>● ● ■", a:["●","●","■"], c:2 },
 
-    ctx.fillStyle="red";
-    ctx.fillRect(z.x-30,z.y-60,60,6);
-    ctx.fillStyle="lime";
-    ctx.fillRect(z.x-30,z.y-60,(z.hp/z.maxHp)*60,6);
+        { q:"3 sandalye ve 2 masa toplam kaç eşyadır?", a:["3","5","6"], c:1 },
 
-    if(z.boss){
-      ctx.fillStyle="black";
-      ctx.font="20px Arial";
-      ctx.fillText("BOSS",z.x-28,z.y-65);
-    }
-  });
+        { q:"En küçük sayı hangisidir?", a:["15","9","21"], c:1 },
+
+        { q:"Öğretmen konuşurken ne yapılmalıdır?", a:["Araya girilir","Sessizce dinlenir","Yürünür"], c:1 },
+
+        { q:"Dur levhası ne anlama gelir?", a:["Dön","Dur","Hızlan"], c:1 },
+
+        /* ✅ STROOP — AÇIK VE NET */
+        {
+            q: "YAZININ RENGİ NEDİR?<br><br>" +
+               "<span style='color:red; font-size:32px;'>MAVİ</span>",
+            a: ["Kırmızı","Mavi","Yeşil"],
+            c: 0
+        },
+        {
+            q: "YAZININ RENGİ NEDİR?<br><br>" +
+               "<span style='color:blue; font-size:32px;'>KIRMIZI</span>",
+            a: ["Mavi","Kırmızı","Yeşil"],
+            c: 0
+        },
+
+        /* ✅ YILDIZ SORUSU — HİZALI */
+        {
+            q: "Hangi satırda daha çok yıldız vardır?<br><br>" +
+               "<div style='font-size:28px;'>★★★★</div>" +
+               "<div style='font-size:28px;'>★★★</div>",
+            a: ["Üstteki","Alttaki","Eşit"],
+            c: 0
+        },
+
+        { q:"Hangi şekil daha büyüktür?", a:["⬛","⬜","Aynı"], c:2 }
+    ];
+
+    examIndex = 0;
+    examScore = 0;
 }
-function drawSuns(){
-  ctx.fillStyle="yellow";
-  suns.forEach(s=>{
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,20,0,Math.PI*2);
-    ctx.fill();
-  });
+
+
+
+function startExam() {
+clearEvents()
+    buildExamQuestions();
+
+    document.getElementById("testScreen").style.display = "none";
+    document.getElementById("examScreen").style.display = "block";
+
+    examTimer = 300;
+    updateExamUI();
+    startExamTimer();
 }
+
+
+function updateExamUI() {
+    let q = examQuestions[examIndex];
+
+    document.getElementById("examQuestion").innerHTML = 
+        (examIndex + 1) + ") " + q.q;
+
+    let ansDiv = document.getElementById("examAnswers");
+    ansDiv.innerHTML = "";
+
+    q.a.forEach((x,i) => {
+        let btn = document.createElement("button");
+        btn.innerHTML = x;
+        btn.style.margin = "8px";
+        btn.onclick = () => answerExam(i);
+        ansDiv.appendChild(btn);
+    });
+}
+
+
+function answerExam(i) {
+    let q = examQuestions[examIndex];
+
+    if (i === q.c) examScore += 10;
+
+    examIndex++;
+    if (examIndex >= examQuestions.length) finishExam();
+    else updateExamUI();
+}
+
+
+function startExamTimer() {
+
+    examInterval = setInterval(() => {
+        examTimer--;
+
+        let m = Math.floor(examTimer / 60);
+        let s = examTimer % 60;
+        if (s < 10) s = "0" + s;
+
+        document.getElementById("examTimer").innerHTML =
+            "Kalan Süre: " + m + ":" + s;
+
+        if (examTimer <= 0) {
+            clearInterval(examInterval);
+            finishExam();
+        }
+    }, 1000);
+}
+
+
+function finishExam() {
+
+    clearInterval(examInterval);
+
+    document.getElementById("examScreen").style.display = "none";
+
+    // Öğrenciye puan gösterme YOK
+    saveFinalData();
+}
+
+
+
 
 /* ============================================================
-   GAME LOOP
-============================================================ */
-let last = 0;
-function loop(ts){
-  let dt = ts - last;
-  last = ts;
+   PART 5 — TÜM SONUCU FIREBASE’A KAYDET
+============================================================= */
 
-  // === PAUSE KONTROLÜ ===
-  if (paused) {
-    ctx.fillStyle = "rgba(0,0,0,0.5)";
-    ctx.fillRect(0, 0, 1280, 650);
+function saveFinalData() {
 
-    ctx.fillStyle = "white";
-    ctx.font = "60px Arial Black";
-    ctx.fillText("PAUSED", 500, 330);
+    // 🔹 SINAV TOPLAM BONUSU (MAX 5 PUAN)
+    let examTotalBonus = Math.min(5, examScore / 20);
+    // examScore max 100 → 5 puan
 
-    requestAnimationFrame(loop);
-    return;
-  }
+    let perTestBonus = examTotalBonus / 6;
 
-  updatePlants(dt);
-  updateBullets(dt);
-  updateZombies(dt);
-  updateSuns(dt);
-  levelLogic(dt);
+    let finalScores = {
+        dikkat: Math.min(20, testScores.dikkat + perTestBonus),
+        daginiklik: Math.min(20, testScores.daginiklik + perTestBonus),
+        odul: Math.min(20, testScores.odul + perTestBonus),
+        hiper: Math.min(20, testScores.hiper + perTestBonus),
+        stroop: Math.min(20, testScores.stroop + perTestBonus),
+        durtu: Math.min(20, testScores.durtu + perTestBonus)
+    };
 
-  ctx.clearRect(0,0,1280,650);
-  drawGrid();
-  drawPlants();
-  drawBullets();
-  drawZombies();
-  drawSuns();
+    let totalRaw =
+        finalScores.dikkat +
+        finalScores.daginiklik +
+        finalScores.odul +
+        finalScores.hiper +
+        finalScores.stroop +
+        finalScores.durtu;
 
-  requestAnimationFrame(loop);
+    let totalPercent = Math.round((totalRaw / 120) * 100);
+
+    let data = {
+        name: studentName,
+        class: studentClass,
+        date: new Date().toLocaleString(),
+
+        dikkat: finalScores.dikkat.toFixed(1),
+        daginiklik: finalScores.daginiklik.toFixed(1),
+        odul: finalScores.odul.toFixed(1),
+        hiper: finalScores.hiper.toFixed(1),
+        stroop: finalScores.stroop.toFixed(1),
+        durtu: finalScores.durtu.toFixed(1),
+
+        sinav: examScore, // ✅ panelde görünen
+        examTotalBonus: examTotalBonus.toFixed(2),
+        totalPercent
+    };
+
+    // ✅ KAYDET
+    saveStudentResult(data);
+// efektleri durdur
+if (gifInterval) {
+    clearInterval(gifInterval);
+    gifInterval = null;
 }
-requestAnimationFrame(loop);
+bgMusic.pause();
+bgMusic.currentTime = 0;
+
+   // BİTTİ EKRANI
+testScreen.style.display = "flex";
+testScreen.style.background = "#333";
+testScreen.style.fontSize = "48px";
+testScreen.innerHTML = "BİTTİ ✔";
+
+// 3 saniye sonra lobiye dön
+setTimeout(() => {
+    location.reload();
+}, 3000);
+
+}
+
+
+
+
+
+
+
+
+/* ============================================================
+   PART 6 — SES + GIF + EMOJI SİSTEMİ
+============================================================= */
+
+const giflist = [
+    "https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif",
+    "https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif",
+    "https://media.giphy.com/media/11s7Ke7jcNxCHS/giphy.gif",
+    "https://media.giphy.com/media/10dU7AN7xsi1I4/giphy.gif",
+    "https://media.giphy.com/media/l3vR85PnGsBwu1PFK/giphy.gif",
+    "https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif",
+    "https://media.giphy.com/media/fAnEC88LccN7a/giphy.gif"
+];
+
+const emojiList = ["😂","😹","🤣","🤪","😛","😅","⭐","⚡","💥"];
+
+let effectSound = new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_3b40fb33a7.mp3");
+effectSound.volume = 0.4;
+
+let bgMusic = new Audio("https://cdn.pixabay.com/audio/2023/03/05/audio_6c76569998.mp3");
+bgMusic.volume = 0.12;
+bgMusic.loop = true;
+
+let gifAreaDiv = document.getElementById("gifArea");
+let gifImgEl = document.getElementById("gifImg");
+
+let gifIntervalActive = false;
+
+
+function randomPosition() {
+    // gifSafeZone içinde küçük rastgele oynama
+    let x = Math.random() * 20;  // 0–20px
+    let y = Math.random() * 20;  // 0–20px
+    return { x, y };
+}
+
+
+
+function showRandomGif() {
+
+    effectSound.pause();
+    effectSound.currentTime = 0;
+    effectSound.play();
+
+    let g = giflist[Math.floor(Math.random()*giflist.length)];
+    gifImgEl.src = g;
+
+    let pos = randomPosition();
+    gifAreaDiv.style.left = pos.x + "px";
+    gifAreaDiv.style.top  = pos.y + "px";
+
+    gifAreaDiv.style.display = "block";
+
+    setTimeout(() => gifAreaDiv.style.display = "none", 2400);
+}
+
+
+function showEmoji() {
+    let e = emojiList[Math.floor(Math.random()*emojiList.length)];
+    let div = document.createElement("div");
+    div.innerHTML = e;
+    div.style.position = "absolute";
+    div.style.right = "40px";
+div.style.bottom = "40px";
+    div.style.fontSize = "60px";
+    let pos = randomPosition();
+    div.style.left = pos.x + "px";
+    div.style.top = pos.y + "px";
+    div.style.zIndex = "2";
+div.style.pointerEvents = "none";
+
+
+    document.body.appendChild(div);
+
+    setTimeout(() => div.remove(), 1800);
+}
+
+
+let gifInterval = null;
+
+function startGifSystem() {
+    if (gifInterval) return;
+
+    bgMusic.play().catch(()=>{});
+
+    gifInterval = setInterval(() => {
+        Math.random() < 0.6 ? showRandomGif() : showEmoji();
+    }, 3000);
+}
+
+
+
+
+
+/* ============================================================
+   PART 7 — GİRİŞ ve REHBER PANELİ
+============================================================= */
+
+function startSystem() {
+
+    studentName  = document.getElementById("studentName").value;
+    studentClass = document.getElementById("studentClass").value;
+
+    if (studentName.trim()==="" || studentClass.trim()==="") {
+        alert("Lütfen bilgileri doldurun.");
+        return;
+    }
+
+    document.getElementById("loginBox").style.display = "none";
+
+    currentTest = 1;
+    runTest();
+}
+
+
+function openTeacherLogin() {
+    document.getElementById("teacherLoginOverlay").style.display = "flex";
+}
+
+
+function enterTeacherPanel() {
+
+    let pass = document.getElementById("teacherPass").value;
+
+    if (pass !== "EVRE12345") {
+        alert("Şifre yanlış!");
+        return;
+    }
+
+    document.getElementById("teacherLoginOverlay").style.display = "none";
+    document.getElementById("teacherPanel").style.display = "block";
+
+    loadStudents();
+}
+
+
+function closeTeacherPanel() {
+    document.getElementById("teacherPanel").style.display = "none";
+}
+
+
+
+
+/* ============================================================
+   PART 8 — YÖNERGE EKRANI
+============================================================= */
+
+let instructionOverlay = document.getElementById("instructionOverlay");
+let instTitle = document.getElementById("instTitle");
+let instText  = document.getElementById("instText");
+
+let pendingCallback = null;
+
+function showInstruction(title, text, callback) {
+    instTitle.innerHTML = title;
+    instText.innerHTML  = text;
+    pendingCallback = callback;
+
+    instructionOverlay.style.display = "block";
+}
+
+function hideInstruction() {
+    instructionOverlay.style.display = "none";
+    if (pendingCallback) pendingCallback();
+}
 
 </script>
 
